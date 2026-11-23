@@ -1,0 +1,84 @@
+# -*- coding: ascii -*-
+"""
+Laboratorio 01 - Busqueda de URLs y terminos de busqueda dentro de un volcado RAW de RAM.
+Autor: Ing. Guillermo Otalora Luna - Digital Forensics 203028123 UNAD
+
+Recorre el archivo en bloques (solo lectura) buscando las URLs del laboratorio en
+ASCII/UTF-8 (como las guarda la red y muchas estructuras de Chromium) y en UTF-16LE
+(como las guarda Windows y la interfaz de Edge). Genera:
+  - urls_encontradas.csv        (offset, codificacion, dominio, texto)
+  - urls_resumen.txt            (conteos y URLs unicas por dominio)
+Uso: python buscar_urls.py <imagen.raw|.mem> <carpeta_salida>
+"""
+import csv, mmap, os, re, sys, time, collections
+
+DOMINIOS = ['unad.edu.co', 'google.com/maps', 'google.com/search', 'eltiempo.com', 'nescafe.com']
+TERMINOS = ['cadena de custodia', 'cadena+de+custodia', 'cadena%20de%20custodia']
+
+def u16(s):
+    return b''.join(re.escape(bytes([c])) + b'\x00' for c in s.encode('ascii'))
+
+alt_a = b'|'.join(re.escape(d.encode()) for d in DOMINIOS)
+alt_u = b'|'.join(u16(d) for d in DOMINIOS)
+PAT = [
+    ('ASCII',    re.compile(rb'https?://[A-Za-z0-9.\-]{0,40}?(?:' + alt_a + rb')[\x21-\x7e]{0,300}')),
+    ('UTF-16LE', re.compile(rb'h\x00t\x00t\x00p\x00(?:s\x00)?:\x00/\x00/\x00(?:[A-Za-z0-9.\-]\x00){0,40}?(?:' + alt_u + rb')(?:[\x21-\x7e]\x00){0,300}')),
+    ('ASCII',    re.compile(rb'(?i)(?:' + b'|'.join(re.escape(t.encode()) for t in TERMINOS) + rb')')),
+    ('UTF-16LE', re.compile(rb'(?i)(?:' + b'|'.join(u16(t) for t in TERMINOS) + rb')')),
+]
+CORTE = re.compile(r'["\'<>\\`{}|^\s]')
+
+def dominio(txt):
+    t = txt.lower()
+    for d in DOMINIOS:
+        if d in t:
+            return d
+    return 'termino: cadena de custodia'
+
+def main(img, outdir):
+    os.makedirs(outdir, exist_ok=True)
+    tam = os.path.getsize(img)
+    BLOQUE, SOLAPE = 128 * 1024 * 1024, 4096
+    hits, vistos = [], set()
+    t0 = time.time()
+    with open(img, 'rb') as f, mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) as mm:
+        pos = 0
+        while pos < tam:
+            fin = min(pos + BLOQUE + SOLAPE, tam)
+            datos = mm[pos:fin]
+            for cod, rx in PAT:
+                for m in rx.finditer(datos):
+                    off = pos + m.start()
+                    if (off, cod) in vistos:
+                        continue
+                    vistos.add((off, cod))
+                    raw = m.group(0)
+                    txt = raw.decode('utf-16le', 'replace') if cod == 'UTF-16LE' else raw.decode('latin-1')
+                    txt = CORTE.split(txt)[0] if txt.startswith('http') else txt
+                    hits.append((off, cod, dominio(txt), txt))
+            pos += BLOQUE
+            print('  {:5.1f}%  {:>6,} MB leidos  {:>7,} coincidencias  {:5.0f} s'.format(
+                min(pos, tam) * 100.0 / tam, min(pos, tam) // 2**20, len(hits), time.time() - t0), flush=True)
+    hits.sort()
+    with open(os.path.join(outdir, 'urls_encontradas.csv'), 'w', newline='', encoding='utf-8') as fc:
+        w = csv.writer(fc)
+        w.writerow(['offset_decimal', 'offset_hex', 'codificacion', 'dominio', 'texto'])
+        for off, cod, dom, txt in hits:
+            w.writerow([off, hex(off), cod, dom, txt])
+    por_dom = collections.defaultdict(collections.Counter)
+    for off, cod, dom, txt in hits:
+        por_dom[dom][txt] += 1
+    lineas = ['Imagen: ' + img, 'Tamano: {:,} bytes'.format(tam),
+              'Tiempo de busqueda: {:.0f} s'.format(time.time() - t0),
+              'Total de coincidencias: {:,}'.format(len(hits)), '']
+    for d in DOMINIOS + ['termino: cadena de custodia']:
+        c = por_dom.get(d, collections.Counter())
+        lineas.append('=== {}  ->  {:,} coincidencias, {:,} textos unicos'.format(d, sum(c.values()), len(c)))
+        for txt, n in c.most_common(12):
+            lineas.append('   {:>5}x  {}'.format(n, txt[:150]))
+        lineas.append('')
+    open(os.path.join(outdir, 'urls_resumen.txt'), 'w', encoding='utf-8').write('\n'.join(lineas))
+    print('\n'.join(lineas).encode('ascii', 'replace').decode('ascii'))
+
+if __name__ == '__main__':
+    main(sys.argv[1], sys.argv[2])

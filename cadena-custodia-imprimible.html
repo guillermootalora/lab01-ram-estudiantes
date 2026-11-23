@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cadena de custodia LAB01</title>
+<meta name="author" content="Ingeniero Guillermo Otálora Luna">
+<meta name="description" content="Tutorial: adquisición de memoria RAM con FTK Imager y WinPmem, hashes, cadena de custodia y análisis con Volatility3. Digital Forensics 203028123, UNAD.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/estilos.css">
+<script>try{var t=localStorage.getItem("lab01-tema");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<div class="readbar" aria-hidden="true"></div>
+<main>
+<section class="band alt" id="custodia"><div class="wrap">
+ <h2>Registro de cadena de custodia</h2>
+ <p class="lead">La cadena de custodia documenta <b>quién</b> tuvo la evidencia, <b>cuándo</b>, <b>cómo</b> y <b>para qué</b>, desde que se adquiere hasta que se presenta. Este registro básico sigue los campos del Manual del Sistema de Cadena de Custodia de la Fiscalía General de la Nación y la ISO/IEC 27037. Hay una versión imprimible en <a href="#descargas">Descargas</a>.</p>
+ <div class="coc">
+  <header><h3>Registro de cadena de custodia · Evidencia digital volátil</h3><span class="tag o">Caso LAB01‑2026‑001</span></header>
+  <div class="scroll"><table class="stack"><thead><tr><th>Campo</th><th>Información</th></tr></thead><tbody><tr><td>Entidad / programa</td><td>Universidad Nacional Abierta y a Distancia (UNAD) · ECBTI · Maestría en Ciberseguridad · curso Digital Forensics 203028123</td></tr><tr><td>Tipo de actividad</td><td>Práctica simulada de laboratorio (escenario controlado, no judicial)</td></tr><tr><td>Responsable de la recolección</td><td>Ing. Guillermo Otálora Luna</td></tr><tr><td>Equipo de origen</td><td>ASUS VivoBook X415JA · nombre GUILLE · usuario GUILLE\guill · Windows 11 Home 25H2 build 26200.9974 · RAM 7,75 GB</td></tr><tr><td>Estado del equipo al adquirir</td><td>Encendido, sesión iniciada, Microsoft Edge con 5 pestañas del laboratorio; OneDrive en pausa</td></tr><tr><td>Zona horaria y referencia</td><td>(UTC−05:00) Bogotá · hora del sistema según windows.info: 2026‑11‑22 21:45:06 UTC = 16:45:06 local</td></tr><tr><td>Ubicación de almacenamiento</td><td>D:\com.gaol.unad\laboratorio_01\evidencias_laboratorio\RAM\ (NTFS, local, fuera de OneDrive) · copia de distribución en Google Drive</td></tr></tbody></table></div>
+  <h4>Elementos de evidencia</h4>
+  <div class="scroll"><table class="stack"><thead><tr><th>ID</th><th>Descripción</th><th>Herramienta y versión</th><th class="num">Tamaño</th><th>SHA‑256</th><th>Estado</th></tr></thead><tbody><tr><td>EV-01</td><td>Imagen RAW de memoria física<br><code>LAB01_FTK_GUILLE_20261122.mem</code></td><td>FTK Imager 8.3.0.27 (File → Capture Memory)</td><td class="num">10.737.418.240 bytes</td><td><span class="h">0654752FC6628B0FA1333316B8531F440D7090E74337F429397A7F492D394736</span></td><td>Solo lectura + .hashes.txt</td></tr><tr><td>EV-02</td><td>Imagen RAW de memoria física<br><code>LAB01_WinPmem_GUILLE_20261122_164926.raw</code></td><td>WinPmem 2.0.1 (winpmem_mini_x64_rc2.exe, PTE remapping)</td><td class="num">10.737.418.240 bytes</td><td><span class="h">2B62243A8593068052EEF3E2C42EABB6378E7E63C4866F1F27C15736C818F331</span></td><td>Solo lectura + .hashes.txt</td></tr></tbody></table></div>
+  <h4>Registro de eventos</h4>
+  <div class="scroll"><table class="stack"><thead><tr><th>Fecha y hora (UTC−5)</th><th>Acción</th><th>Responsable</th><th>Verificación</th></tr></thead><tbody><tr><td>2026‑11‑22 16:45:06 → 16:46:42</td><td>Adquisición EV‑01 con FTK Imager (File → Capture Memory)</td><td>G. Otálora</td><td>Mensaje «finished successfully»</td></tr><tr><td>2026‑11‑22 16:49:24</td><td>Hashes MD5/SHA‑1/SHA‑256 de EV‑01; archivo en solo lectura</td><td>G. Otálora</td><td>certutil SHA‑256 coincide</td></tr><tr><td>2026‑11‑22 16:49:26 → 16:51:24</td><td>Adquisición EV‑02 con WinPmem 2.0.1</td><td>G. Otálora</td><td>Log completo del driver</td></tr><tr><td>2026‑11‑22 16:53:04</td><td>Hashes de EV‑02; archivo en solo lectura</td><td>G. Otálora</td><td>certutil SHA‑256 coincide</td></tr><tr><td>2026‑11‑22 17:00 y 17:57</td><td>Verificación del SHA‑256 de EV‑01 antes de cada análisis</td><td>G. Otálora</td><td>Hash idéntico al registrado</td></tr><tr><td>2026‑11‑22 17:01 → 17:59</td><td>Análisis con Volatility3 2.28.2 (solo lectura sobre EV‑01; windows.info sobre EV‑02)</td><td>G. Otálora</td><td>Resultados CSV con hash</td></tr><tr><td>2026‑11‑22 (noche)</td><td>Copia de EV‑01 y EV‑02 con sus .hashes.txt a Google Drive, carpeta Artefacto_RAW, para distribución académica con acceso restringido</td><td>G. Otálora</td><td>Cada receptor verifica el SHA‑256 tras descargar</td></tr></tbody></table></div>
+  <div class="sig"><div>Entrega: Ing. Guillermo Otálora Luna · firma y fecha</div><div>Recibe · nombre, cargo, firma y fecha</div><div>Observaciones</div></div>
+ </div>
+</div></section></main></body></html>

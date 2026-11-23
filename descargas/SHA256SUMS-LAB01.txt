@@ -1,0 +1,4 @@
+# SHA-256 de las imagenes RAW del Laboratorio 01 (caso LAB01-2026-001)
+# Adquisicion: 2026-11-22, zona horaria UTC-05:00 (Bogota). Verificar con: sha256sum -c SHA256SUMS-LAB01.txt   # (verifique la linea de la imagen que descargo)
+0654752fc6628b0fa1333316b8531f440d7090e74337f429397a7f492d394736  LAB01_FTK_GUILLE_20261122.mem
+2b62243a8593068052eef3e2c42eabb6378e7e63c4866f1f27c15736c818f331  LAB01_WinPmem_GUILLE_20261122_164926.raw
