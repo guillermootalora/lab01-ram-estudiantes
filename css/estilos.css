@@ -15,24 +15,27 @@
 @font-face{font-family:"JetBrains Mono";src:url(../assets/fonts/jetbrains-mono-latin-600-normal.woff2) format("woff2");font-weight:600;font-style:normal;font-display:swap}
 
 :root{
-  color-scheme:light dark;
-  --bg:light-dark(#ffffff,#040b18);
-  --bg2:light-dark(#eef4fd,#081429);
-  --panel:light-dark(#f6f9ff,#0b1b36);
-  --line:light-dark(#c9d7ee,#1c3358);
-  --ink:light-dark(#0a1630,#e4edfb);
-  --muted:light-dark(#4a5b78,#9fb2d1);
-  --blue:light-dark(#0b5cd5,#3d9bff);
-  --blue2:light-dark(#063a8c,#1f6fe0);
-  --orange:light-dark(#d45a00,#ff8a2a);
-  --cyan:light-dark(#007f99,#33d6ff);
-  --ok:light-dark(#0b7a43,#3ddc84);
-  --bad:light-dark(#b3261e,#ff6b5e);
-  --code:light-dark(#0d1b33,#020812);
+  color-scheme:light;
+  --bg:#ffffff;
+  --bg2:#eef4fd;
+  --panel:#f6f9ff;
+  --line:#c9d7ee;
+  --ink:#0a1630;
+  --muted:#4a5b78;
+  --blue:#0b5cd5;
+  --blue2:#063a8c;
+  --orange:#d45a00;
+  --cyan:#007f99;
+  --ok:#0b7a43;
+  --bad:#b3261e;
+  --code:#0d1b33;
   --codeink:#dbe7ff;
-  --glow:light-dark(rgba(11,92,213,.18),rgba(61,155,255,.35));
+  --glow:rgba(11,92,213,.18);
   --r:14px;
 }
+
+:root[data-theme=dark]{--bg:#040b18;--bg2:#081429;--panel:#0b1b36;--line:#1c3358;--ink:#e4edfb;--muted:#9fb2d1;--blue:#3d9bff;--blue2:#1f6fe0;--orange:#ff8a2a;--cyan:#33d6ff;--ok:#3ddc84;--bad:#ff6b5e;--code:#020812;--glow:rgba(61,155,255,.35);--blue-soft:#0d2147;--orange-soft:#2a1606;--cyan-soft:#05252e;--violet:#a48bff;--violet-soft:#1a1238;--green:#3ddc84;--green-soft:#082a19}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#040b18;--bg2:#081429;--panel:#0b1b36;--line:#1c3358;--ink:#e4edfb;--muted:#9fb2d1;--blue:#3d9bff;--blue2:#1f6fe0;--orange:#ff8a2a;--cyan:#33d6ff;--ok:#3ddc84;--bad:#ff6b5e;--code:#020812;--glow:rgba(61,155,255,.35);--blue-soft:#0d2147;--orange-soft:#2a1606;--cyan-soft:#05252e;--violet:#a48bff;--violet-soft:#1a1238;--green:#3ddc84;--green-soft:#082a19}}
 :root[data-theme=light]{color-scheme:light}
 :root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
@@ -283,7 +286,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between}
 }
 
 /* =================== v3: tema, marcos de sección, glosario, UX =================== */
-:root{--blue-soft:light-dark(#e4eeff,#0d2147);--orange-soft:light-dark(#fff0e3,#2a1606);--cyan-soft:light-dark(#e0f7fb,#05252e);--violet:light-dark(#5b3fd6,#a48bff);--violet-soft:light-dark(#efeaff,#1a1238);--green:light-dark(#0b7a43,#3ddc84);--green-soft:light-dark(#e3f6ec,#082a19)}
+:root{--blue-soft:#e4eeff;--orange-soft:#fff0e3;--cyan-soft:#e0f7fb;--violet:#5b3fd6;--violet-soft:#efeaff;--green:#0b7a43;--green-soft:#e3f6ec}
 :root[data-theme=light]{--bg2:#eef4fd;--muted:#3e4f6b}
 :root[data-theme=dark]{--muted:#a9bcd9}
 
@@ -374,3 +377,18 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between}
 .call.su{border:2px dashed var(--orange);border-left-width:2px;border-radius:var(--r);background:transparent}
 .call.su b{color:var(--orange)}
 .meta .ver{color:var(--orange);font-weight:700}
+
+/* Lab 01: pestañas Estudiante / Docente */
+.ptabs{display:flex;align-items:center;gap:6px}
+.ptab{font:600 14px "IBM Plex Sans",sans-serif;padding:7px 12px;border-radius:999px;border:2px solid var(--blue);background:transparent;color:var(--blue);cursor:pointer;white-space:nowrap}
+.ptab.o{border-color:var(--orange);color:var(--orange)}
+.ptab[aria-selected=true]{background:var(--blue);color:#fff}
+.ptab.o[aria-selected=true]{background:var(--orange);color:#fff}
+section[data-tab][hidden]{display:none}
+@media print{section[data-tab][hidden]{display:block!important}.ptabs{display:none}}
+.route{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:20px 0}
+.route a{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);text-decoration:none;font-size:14px;line-height:1.3}
+.route a:hover{border-color:var(--blue)}
+.route b{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--blue);color:#fff;font:700 14px "Chakra Petch",sans-serif}
+.route.o b{background:var(--orange)}
+@media (max-width:760px){.ptab{padding:6px 9px;font-size:13px}}

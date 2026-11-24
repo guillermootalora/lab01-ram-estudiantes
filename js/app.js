@@ -217,3 +217,35 @@
   });
   filter();
 }
+
+/* =================== Lab 01: pestañas Estudiante / Docente =================== */
+(() => {
+  const tabs = [...document.querySelectorAll('.ptab')];
+  if (!tabs.length) return;
+  const secs = [...document.querySelectorAll('section[data-tab]')];
+  const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+                  set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+  const show = t => {
+    secs.forEach(s => { s.hidden = s.dataset.tab !== t; });
+    tabs.forEach(b => b.setAttribute('aria-selected', String(b.dataset.t === t)));
+    document.body.dataset.tab = t; store.set('lab01-pestana', t);
+  };
+  const reveal = id => {
+    const el = id && document.getElementById(id); if (!el) return false;
+    const s = el.closest('section[data-tab]');
+    if (s && s.hidden) { show(s.dataset.tab); requestAnimationFrame(() => el.scrollIntoView()); return true; }
+    return false;
+  };
+  tabs.forEach(b => b.addEventListener('click', () => {
+    show(b.dataset.t);
+    const first = document.getElementById(b.dataset.t === 'doc' ? 'parte2' : 'caso');
+    if (first) first.scrollIntoView();
+  }));
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href^="#"]'); if (!a) return;
+    reveal(a.getAttribute('href').slice(1));
+  }, true);
+  window.addEventListener('hashchange', () => reveal(location.hash.slice(1)));
+  show(store.get('lab01-pestana') || 'est');
+  reveal(location.hash.slice(1));
+})();
